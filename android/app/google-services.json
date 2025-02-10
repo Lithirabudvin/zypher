@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "36745613407",
+    "firebase_url": "https://superbsf-default-rtdb.firebaseio.com",
+    "project_id": "superbsf",
+    "storage_bucket": "superbsf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:36745613407:android:26e08d1de49987339b8bea",
+        "android_client_info": {
+          "package_name": "com.example.bsfiot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKr4tnq4oVqPHg6ZsXcQt1Fh9OzqvzKaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
