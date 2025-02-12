@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -146,3 +147,6 @@ class CompostMonitorScreenState extends State<CompostMonitorScreen> {
     );
   }
 }
+=======
+
+>>>>>>> 3a2b894 (Create compost_monitor_screen.dart)
