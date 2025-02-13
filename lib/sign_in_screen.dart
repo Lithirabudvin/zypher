@@ -4,6 +4,8 @@ import 'compost_monitor_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
