@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -12,24 +14,63 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   void signUp() async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // Create the user account
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      // Account created successfully
+
+      // Send email verification
+      await userCredential.user?.sendEmailVerification();
+
+      // Show a message to the user to check their email
       if (mounted) {
-        // Check if the widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Account created successfully")),
+          SnackBar(
+              content: Text(
+                  "Account created successfully. Please check your email for verification.")),
         );
-        Navigator.pop(context); // Return to the sign-in screen
       }
+
+      // Navigate back to the sign-in screen
+      Navigator.pop(context);
     } catch (error) {
       // Handle sign-up errors
       if (mounted) {
-        // Check if the widget is still mounted
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Sign Up Failed: ${error.toString()}")),
+        );
+      }
+    }
+  }
+
+  // Method to resend verification email
+  void resendVerificationEmail() async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await user.sendEmailVerification();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text("Verification email sent. Please check your inbox.")),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("No user is currently signed in.")),
+          );
+        }
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "Failed to resend verification email: ${error.toString()}")),
         );
       }
     }
@@ -38,12 +79,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: Text("Sign Up"),
         centerTitle: true,
         backgroundColor: Colors.lightBlue,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -62,6 +104,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ElevatedButton(
               onPressed: signUp,
               child: Text("Sign Up"),
+            ),
+            TextButton(
+              onPressed: resendVerificationEmail,
+              child: Text("Resend Verification Email"),
             ),
             TextButton(
               onPressed: () {
