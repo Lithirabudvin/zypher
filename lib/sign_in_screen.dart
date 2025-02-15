@@ -14,24 +14,56 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  void signIn() {
-    FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    )
-        .then((userCredential) {
-      // Navigate to the main screen after successful sign-in
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => CompostMonitorScreen()),
+  void signIn() async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
       );
-    }).catchError((error) {
+
+      // Check if the email is verified
+      if (userCredential.user?.emailVerified ?? false) {
+        // Navigate to the main screen after successful sign-in
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CompostMonitorScreen()),
+        );
+      } else {
+        // Prompt the user to verify their email
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Please verify your email before signing in."),
+            action: SnackBarAction(
+              label: "Resend Verification Email",
+              onPressed: () => resendVerificationEmail(userCredential.user!),
+            ),
+          ),
+        );
+      }
+    } catch (error) {
       // Handle sign-in errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Sign In Failed: ${error.toString()}")),
       );
-    });
+    }
+  }
+
+  // Method to resend verification email
+  void resendVerificationEmail(User user) async {
+    try {
+      await user.sendEmailVerification();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text("Verification email sent. Please check your inbox.")),
+      );
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Failed to resend verification email: ${error.toString()}")),
+      );
+    }
   }
 
   @override
