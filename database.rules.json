@@ -1,0 +1,105 @@
+{
+  "rules": {
+    "users": {
+      ".read": "root.child('users').child(auth.uid).child('role').val() === 'customer'",
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'customer'",
+        ".write": "$uid === auth.uid",
+        "devices": {
+          ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'customer'",
+          ".write": "$uid === auth.uid"
+        },
+        "products": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid",
+          "$productId": {
+            ".validate": "newData.hasChildren(['name', 'price', 'unit', 'quantity'])",
+            "name": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "price": {
+              ".validate": "newData.isNumber() && newData.val() >= 0"
+            },
+            "unit": {
+              ".validate": "newData.isString() && newData.val().length > 0"
+            },
+            "quantity": {
+              ".validate": "newData.isNumber() && newData.val() > 0"
+            }
+          }
+        },
+        "notifications": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'supplier'",
+          "$notificationId": {
+            ".validate": "newData.hasChildren(['type', 'message', 'timestamp', 'read'])",
+            "type": {
+              ".validate": "newData.isString()"
+            },
+            "message": {
+              ".validate": "newData.isString()"
+            },
+            "timestamp": {
+              ".validate": "newData.isNumber()"
+            },
+            "read": {
+              ".validate": "newData.isBoolean()"
+            }
+          }
+        }
+      }
+    },
+    "devices": {
+      ".read": "auth != null",
+      "$deviceId": {
+        ".read": "auth != null && (data.child('owner').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'customer')",
+        ".write": "auth != null && ( (!data.exists() && newData.child('owner').val() === auth.uid) || (!data.child('owner').exists() && newData.child('owner').val() === auth.uid) || (data.child('owner').val() === auth.uid) )",
+        "config": {
+          ".read": true,
+          "brightness": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 255" },
+          "moist_device": { ".validate": "newData.isNumber() && (newData.val() == 0 || newData.val() == 1)" },
+          "compost_state": { ".validate": "newData.isNumber() && (newData.val() == 0 || newData.val() == 1)" }
+        },
+        "sensor_data": {
+          ".write": true,
+          "temperature": { ".validate": "newData.isNumber()" },
+          "humidity": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" },
+          "light": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+          "compose_level": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100" }
+        },
+        "owner": {
+          ".validate": "newData.val() === auth.uid || (!data.exists() && newData.child('owner').val() === auth.uid)"
+        },
+        "name": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        }
+      }
+    },
+    "buyRequests": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$requestId": {
+        ".validate": "newData.hasChildren(['buyerId', 'supplierId', 'productId', 'quantity', 'status', 'timestamp'])",
+        "buyerId": {
+          ".validate": "newData.val() === auth.uid"
+        },
+        "supplierId": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "productId": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        },
+        "quantity": {
+          ".validate": "newData.isNumber() && newData.val() > 0"
+        },
+        "status": {
+          ".validate": "newData.isString() && (newData.val() === 'pending' || newData.val() === 'accepted' || newData.val() === 'rejected' || newData.val() === 'completed')"
+        },
+        "timestamp": {
+          ".validate": "newData.isNumber()"
+        }
+      },
+      ".indexOn": ["supplierId", "buyerId", "status"]
+    }
+  }
+} 
