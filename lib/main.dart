@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<AuthService>(
-          create: (_) => AuthService(FirebaseAuth.instance),
+          create: (_) => AuthService(),
         ),
         StreamProvider(
           create: (context) => context.read<AuthService>().authStateChanges,
@@ -76,55 +76,20 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
     super.initState();
     _authSubscription = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user != null) {
-        _checkEmailVerification(user);
+        _initializeUserSession(user.uid);
       } else {
         _cleanupUserSession();
       }
     });
   }
 
-  Future<void> _checkEmailVerification(User user) async {
-    try {
-      // Force token refresh and check email verification
-      await user.getIdToken(true);
-      await user.reload();
-      final currentUser = FirebaseAuth.instance.currentUser;
-
-      if (currentUser != null && !currentUser.emailVerified) {
-        // If email is not verified, sign out and show message
-        await FirebaseAuth.instance.signOut();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Please verify your email before signing in.'),
-              duration: Duration(seconds: 5),
-            ),
-          );
-        }
-        return;
-      }
-
-      // If email is verified, sign out and show sign-in page
-      await FirebaseAuth.instance.signOut();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Email verified! Please sign in to continue.'),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 5),
-          ),
-        );
-      }
-    } catch (e) {
-      debugPrint("Error checking email verification: $e");
-      _cleanupUserSession();
-    }
-  }
-
   Future<void> _initializeUserSession(String uid) async {
     try {
       // Cleanup any existing listeners first
       _cleanupUserSession();
+
+      // Force token refresh
+      await FirebaseAuth.instance.currentUser?.getIdToken(true);
 
       // Setup new listeners
       _userDevicesRef = FirebaseDatabase.instance.ref('users/$uid/devices');
@@ -139,6 +104,7 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
     } catch (e) {
       debugPrint("Error in _initializeUserSession: $e");
       _cleanupUserSession();
+      // Don't rethrow the error, just log it
     }
   }
 
@@ -149,19 +115,24 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
       _userDevicesRef = null;
     } catch (e) {
       debugPrint("Error during cleanup: $e");
+      // Continue with cleanup even if there's an error
     }
   }
 
   void _handlePermissionError() {
     try {
+      // Force re-authentication
       FirebaseAuth.instance.signOut();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
+
+      // Show message to user if context is available
+      if (globalContext != null && mounted) {
+        ScaffoldMessenger.of(globalContext!).showSnackBar(
           SnackBar(content: Text('Session expired. Please sign in again.')),
         );
       }
     } catch (e) {
       debugPrint("Error handling permission error: $e");
+      // Continue with sign out even if there's an error
     }
   }
 
@@ -174,9 +145,13 @@ class _AuthenticationWrapperState extends State<AuthenticationWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    final firebaseUser = context.watch<User?>();
+    // Store context for global access (use carefully)
+    globalContext = context;
 
-    // Always show sign-in page
+    final firebaseUser = context.watch<User?>();
+    if (firebaseUser != null) {
+      return HomePage();
+    }
     return SignInScreen();
   }
 }

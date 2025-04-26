@@ -37,13 +37,11 @@ class _SignupScreenState extends State<SignupScreen> {
     setState(() => _isLoading = true);
 
     try {
-      await context.read<AuthService>().signUp(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-            name: _nameController.text.trim(),
-            address: _addressController.text.trim(),
-            phoneNumber: _phoneController.text.trim(),
-            role: UserRole.customer,
+      await context.read<AuthService>().signUpWithEmailAndPassword(
+            _emailController.text.trim(),
+            _passwordController.text.trim(),
+            _nameController.text.trim(),
+            UserRole.customer,
           );
 
       if (mounted) {
