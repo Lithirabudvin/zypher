@@ -5,68 +5,67 @@ import 'package:flutter/material.dart';
 import '../models/user_model.dart';
 
 class AuthService {
-  final FirebaseAuth _firebaseAuth;
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
 
-  AuthService(this._firebaseAuth);
+  Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
-
-  Future<User?> signIn(String email, String password) async {
+  Future<UserCredential?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      final UserCredential userCredential =
+          await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // Force token refresh and wait for completion
-      await userCredential.user?.getIdToken(true);
-      return userCredential.user;
+      // Check if email is verified
+      if (!userCredential.user!.emailVerified) {
+        await userCredential.user!.sendEmailVerification();
+        throw FirebaseAuthException(
+          code: 'email-not-verified',
+          message:
+              'Please verify your email first. A new verification email has been sent.',
+        );
+      }
+
+      return userCredential;
     } on FirebaseAuthException catch (e) {
-      debugPrint("Sign in error: ${e.code} - ${e.message}");
-      throw FirebaseAuthException(code: e.code, message: e.message);
+      throw e;
     }
   }
 
-  Future<User?> signUp({
-    required String email,
-    required String password,
-    required String name,
-    required String address,
-    required String phoneNumber,
-    required UserRole role,
-  }) async {
+  Future<UserCredential?> signUpWithEmailAndPassword(
+      String email, String password, String name, UserRole role) async {
     try {
-      UserCredential result = await _firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-      if (result.user != null) {
-        // Create user model with additional fields
-        final userModel = UserModel(
-          uid: result.user!.uid,
-          email: email,
-          name: name,
-          address: address,
-          phone: phoneNumber,
-          role: role,
-        );
+      // Send verification email
+      await userCredential.user!.sendEmailVerification();
 
-        // Store user data in Realtime Database
-        await _database.ref('users/${result.user!.uid}').set(userModel.toMap());
+      // Create user profile in database
+      final user = UserModel(
+        uid: userCredential.user!.uid,
+        email: email,
+        name: name,
+        role: role,
+      );
 
-        // Send email verification
-        await result.user?.sendEmailVerification();
-      }
+      await _database.child('users/${user.uid}').set(user.toMap());
 
-      return result.user;
-    } catch (e) {
+      return userCredential;
+    } on FirebaseAuthException catch (e) {
       throw e;
     }
   }
 
   Future<UserModel?> getUserData(String uid) async {
     try {
-      final snapshot = await _database.ref('users/$uid').get();
+      final snapshot = await _database.child('users/$uid').get();
       if (snapshot.exists) {
         return UserModel.fromMap(
             Map<String, dynamic>.from(snapshot.value as Map));
@@ -80,23 +79,55 @@ class AuthService {
 
   Future<void> signOut(BuildContext context) async {
     try {
-      // Cancel any pending operations
-      await Future.delayed(Duration.zero);
-
-      // Sign out from Firebase
-      await _firebaseAuth.signOut();
-
-      // Add a small delay to ensure complete cleanup
-      await Future.delayed(Duration(milliseconds: 100));
-
-      // Navigate to sign in page
+      await _auth.signOut();
       if (context.mounted) {
         Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
       }
     } catch (e) {
-      debugPrint("Sign out error: $e");
-      // Don't rethrow the error, just log it
-      // This prevents the app from crashing if there's an error during sign out
+      throw e;
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<User?> signUp({
+    required String email,
+    required String password,
+    required String name,
+    required String address,
+    required String phoneNumber,
+    required UserRole role,
+  }) async {
+    try {
+      final UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      // Send verification email
+      await userCredential.user!.sendEmailVerification();
+
+      // Create user profile in database
+      final user = UserModel(
+        uid: userCredential.user!.uid,
+        email: email,
+        name: name,
+        address: address,
+        phone: phoneNumber,
+        role: role,
+      );
+
+      await _database.child('users/${user.uid}').set(user.toMap());
+      return userCredential.user;
+    } on FirebaseAuthException catch (e) {
+      throw e;
     }
   }
 }
