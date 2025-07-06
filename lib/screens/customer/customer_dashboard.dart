@@ -428,7 +428,7 @@ class _CustomerDashboardState extends State<CustomerDashboard> {
                                 ],
                               ),
                               subtitle: Text(
-                                '${supplierProduct.product.quantity} ${supplierProduct.product.unit} • \$${supplierProduct.product.price.toStringAsFixed(2)}',
+                                '${supplierProduct.product.quantity} ${supplierProduct.product.unit} • \LKR${supplierProduct.product.price.toStringAsFixed(2)}',
                               ),
                               trailing: ElevatedButton(
                                 onPressed: _hasActiveRequest(supplierProduct)
@@ -471,7 +471,7 @@ class _CustomerDashboardState extends State<CustomerDashboard> {
                               Text('Address: ${request.supplierAddress}'),
                               Text('Phone: ${request.supplierPhone}'),
                               Text(
-                                '${request.quantity} ${request.unit} • \$${request.price.toStringAsFixed(2)}',
+                                '${request.quantity} ${request.unit} • \LKR${request.price.toStringAsFixed(2)}',
                               ),
                               Text(
                                 'Status: ${request.status}',

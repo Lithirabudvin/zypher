@@ -448,7 +448,7 @@ class _SellProductsScreenState extends State<SellProductsScreen> {
                           controller: _priceController,
                           decoration: InputDecoration(
                             labelText: 'Price',
-                            prefixText: '\$',
+                            prefixText: '\LKR',
                           ),
                           keyboardType:
                               TextInputType.numberWithOptions(decimal: true),
@@ -498,7 +498,7 @@ class _SellProductsScreenState extends State<SellProductsScreen> {
                                       return ListTile(
                                         title: Text(product.name),
                                         subtitle: Text(
-                                          '${product.quantity} ${product.unit} • \$${product.price.toStringAsFixed(2)}',
+                                          '${product.quantity} ${product.unit} • \LKR${product.price.toStringAsFixed(2)}',
                                         ),
                                         trailing: Row(
                                           mainAxisSize: MainAxisSize.min,

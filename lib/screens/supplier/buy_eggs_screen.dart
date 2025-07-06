@@ -340,7 +340,7 @@ class _BuyEggsScreenState extends State<BuyEggsScreen> {
                                 ],
                               ),
                               subtitle: Text(
-                                '${supplierEgg.egg.quantity} ${supplierEgg.egg.unit} • \$${supplierEgg.egg.price.toStringAsFixed(2)}',
+                                '${supplierEgg.egg.quantity} ${supplierEgg.egg.unit} • \LKR${supplierEgg.egg.price.toStringAsFixed(2)}',
                               ),
                               trailing: ElevatedButton(
                                 onPressed: _hasActiveRequest(supplierEgg)
@@ -388,7 +388,7 @@ class _BuyEggsScreenState extends State<BuyEggsScreen> {
                             children: [
                               Text('Product: ${request.productName}'),
                               Text(
-                                '${request.quantity} ${request.unit} • \$${request.price.toStringAsFixed(2)}',
+                                '${request.quantity} ${request.unit} • \LKR${request.price.toStringAsFixed(2)}',
                               ),
                               Text(
                                 'Status: ${request.status}',
