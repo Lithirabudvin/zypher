@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('IoT Dashboard')),
+        appBar: AppBar(title: Text('BSFix')),
         body: Center(child: CircularProgressIndicator()),
       );
     }
