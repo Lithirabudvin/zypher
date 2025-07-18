@@ -35,7 +35,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    'IoT Dashboard',
+                    'Dashboard',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 24,

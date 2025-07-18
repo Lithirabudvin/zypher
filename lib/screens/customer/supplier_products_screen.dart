@@ -304,7 +304,7 @@ class _SupplierProductsScreenState extends State<SupplierProductsScreen> {
                                 ],
                               ),
                               subtitle: Text(
-                                '${supplierProduct.product.quantity} ${supplierProduct.product.unit} • \$${supplierProduct.product.price.toStringAsFixed(2)}',
+                                '${supplierProduct.product.quantity} ${supplierProduct.product.unit} • \LKR${supplierProduct.product.price.toStringAsFixed(2)}',
                               ),
                               trailing: ElevatedButton(
                                 onPressed: _hasActiveRequest(supplierProduct)
@@ -352,7 +352,7 @@ class _SupplierProductsScreenState extends State<SupplierProductsScreen> {
                             children: [
                               Text('Product: ${request.productName}'),
                               Text(
-                                '${request.quantity} ${request.unit} • \$${request.price.toStringAsFixed(2)}',
+                                '${request.quantity} ${request.unit} • \LKR${request.price.toStringAsFixed(2)}',
                               ),
                               Text(
                                 'Status: ${request.status}',

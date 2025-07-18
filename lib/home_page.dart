@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'screens/devices_screen.dart';
 import 'screens/auth/sign_in_screen.dart';
+import 'screens/auth/email_verification_screen.dart';
 import 'screens/customer/customer_dashboard.dart';
 import 'screens/supplier/sell_products_screen.dart';
 import 'screens/supplier/buy_eggs_screen.dart';
@@ -58,9 +59,21 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('IoT Dashboard')),
+        appBar: AppBar(title: Text('BSFix')),
         body: Center(child: CircularProgressIndicator()),
       );
+    }
+
+    final user = FirebaseAuth.instance.currentUser;
+
+    // If no user is authenticated, show sign in page
+    if (user == null) {
+      return SignInScreen();
+    }
+
+    // If user is not email verified, show verification screen
+    if (!user.emailVerified) {
+      return EmailVerificationScreen();
     }
 
     // If user is a customer (previously distributor), show customer dashboard
