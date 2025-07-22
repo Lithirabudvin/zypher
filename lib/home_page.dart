@@ -200,7 +200,7 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     SizedBox(height: 12),
                                     Text(
-                                      'BSFix is your one-stop platform for buying and selling Black Soldier Fly products. Whether you\'re a farmer, compost recycler, or sustainable product buyer, we can connect you with the right people—eco-conscious and efficient.',
+                                      'BSFix is your one-stop platform for buying and selling Black Soldier Fly products. Whether you\'re a farmer, compost recycler, or sustainable product buyer, we  connect you with the right people—eco-conscious and efficient.',
                                       style: TextStyle(
                                         fontSize: 15,
                                         color: Colors.grey[800],
