@@ -108,7 +108,7 @@ Alongside the software development and IoT integration, our team has **designed 
 ## Getting Started
 
 1. **Clone the repository:**  
-   `git clone https://github.com/yourusername/bsf-smart-farming-app.git`
+   `git clone https://github.com/lithirabudvin/zypher.git`
 
 2. **Install dependencies:**  
    `npm install` or `yarn install` (based on framework)
