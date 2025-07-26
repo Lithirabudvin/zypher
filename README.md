@@ -27,6 +27,7 @@ The mobile app allows users (customers and suppliers) to interact with these uni
 
 ---
 
+
 ## Features
 
 ### 🛠 Registration & Authentication
@@ -68,6 +69,31 @@ The mobile app allows users (customers and suppliers) to interact with these uni
 </details>
 
 ---
+## Physical Breeding & Compost Units
+
+Alongside the software development and IoT integration, our team has **designed and built the actual hardware units for both the BSF Breeding and Composting subsystems**! 
+
+### 🪲 BSF Larvae Breeding Unit
+
+- Carefully constructed for optimal egg hatching and larvae growth conditions.
+- Equipped with sensors for **real-time temperature, humidity, and light monitoring**.
+- Includes hardware interfaces for controlling **humidity**, **temperature**, and **brightness** directly from the mobile app.
+- Robust, cleanable enclosure designed for long-term, hygienic operation.
+
+<img src="./images/breeding_unit.jpg" width="500" alt="Photo of custom-built BSF larvae breeding unit">
+
+### ♻️ Compost Making Unit
+
+- Designed to convert organic waste into valuable BSF larvae compost.
+- Features sensors to monitor **compost level** and internal conditions.
+- Includes a built-in mechanism to retrieve compost, controlled via the app.
+- **Thermal camera module** integrated for visualizing larvae activities inside the compost mass.
+
+<img src="./images/compost_unit.jpg" width="500" alt="Photo of custom-built BSF compost unit">
+
+> *Both hardware units are fully integrated with the mobile app, enabling remote monitoring and control, and serve as key demonstrators for our holistic smart farming platform.*
+
+---
 
 ## Screenshots
 
@@ -99,10 +125,10 @@ The mobile app allows users (customers and suppliers) to interact with these uni
 ## Tech Stack
 
 - **Frontend:** React Native (or Flutter) for seamless cross-platform support
-- **Backend API:** Node.js/Firebase/AWS (update if different)
-- **Real-Time Data:** MQTT/WebSockets for sensor/control data
+- **Backend API:** Firebase (update if different)
+- **Real-Time Data:** WebSockets for sensor/control data
 - **Image Handling:** Integrated for thermal image display
-- **Authentication:** Firebase Auth / JWT / Social logins (specify as implemented)
+- **Authentication:** Firebase Auth
 - **Marketplace:** In-app purchase flows and product listings
 
 ---
@@ -130,6 +156,8 @@ Worked closely with backend/IoT developers and UI designers for seamless app-dev
 
 Thanks to all team members for their collaboration and innovation, and to our advisors for their guidance.
 
----
+<img src="./images/group_photo_with_product.png" width="500" alt="Team Zypher">
+
+```
 
 
