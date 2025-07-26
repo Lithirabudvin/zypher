@@ -89,7 +89,7 @@ Alongside the software development and IoT integration, our team has **designed 
 - Includes a built-in mechanism to retrieve compost, controlled via the app.
 - **Thermal camera module** integrated for visualizing larvae activities inside the compost mass.
 
-<img src="./images/compost_unit.jpg" width="500" alt="Photo of custom-built BSF compost unit">
+<img src="./images/composting_unit.jpg" width="500" alt="Photo of custom-built BSF compost unit">
 
 > *Both hardware units are fully integrated with the mobile app, enabling remote monitoring and control, and serve as key demonstrators for our holistic smart farming platform.*
 
